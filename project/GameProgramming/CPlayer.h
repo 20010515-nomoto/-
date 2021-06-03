@@ -8,6 +8,7 @@
 #include "CColliderLine.h"
 //
 #include "CText.h"
+#include <Windows.h>
 /*
 プレイヤークラス
 キャラクタクラスを継承

@@ -29,7 +29,6 @@ void CSceneGame::Init() {
 	//背景モデルから三角コライダを生成
 	//親インスタンスと親行列は無し
 	mColliderMesh.Set(NULL, NULL, &mBackGround);
-	mColliderMesh.Set(NULL, NULL, &mModel);
 }
 
 

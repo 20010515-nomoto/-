@@ -18,7 +18,7 @@
 CPlayer *CPlayer::spThis = 0;
 
 #define GRAVITY -0.5		//重力
-#define ACCELERATION 0.01	//加速値
+#define ACCELERATION 0.005	//加速値
 #define VELOCITYMAX 0.2		//移動スピード最大値
 #define VELOCITYMIN -0.2	//移動スピード最小値
 #define MOVEADJUST 0.7		//斜め移動時の移動量調整値
@@ -43,6 +43,9 @@ CPlayer::CPlayer()
 
 //更新処理
 void CPlayer::Update() {
+	//マウス位置取得
+	POINT MousePoint;
+	GetCursorPos(&MousePoint);
 	////これより下、移動処理////
 	//Aキー入力で左移動
 	if (CKey::Push('A')) {
@@ -102,6 +105,9 @@ void CPlayer::Update() {
 		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
 	}
 	////移動処理終わり////
+
+	//マウス位置をプレイヤーY軸回転に変換
+	mRotation.mY = -MousePoint.x / 4;
 
 	//CTransformの更新
 	CTransform::Update();
