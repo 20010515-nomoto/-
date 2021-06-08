@@ -1,14 +1,15 @@
 #ifndef CTEXTURE_H
 #define CTEXTURE_H
 #include "glut.h"
+#include "SOIL.h"
 /*
 TGAファイルのヘッダフォーマット
 */
 struct STgamHeader {
 	unsigned char	dummy1[12];
-	unsigned short	width;	//幅
-	unsigned short	height;	//高さ
-	unsigned char	depth;	//ビットの深さ
+	int	width;	//幅
+	int	height;	//高さ
+	int	depth;	//ビットの深さ
 	unsigned char	discripter;
 };
 /*
