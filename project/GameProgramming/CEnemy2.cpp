@@ -50,7 +50,8 @@ CEnemy2::CEnemy2(const CVector& position, const CVector& rotation, const CVector
 	CTaskManager::Get()->Remove(this); //削除して
 	CTaskManager::Get()->Add(this); //追加する
 	//目標地点の設定
-	mPoint = mPosition + CVector(0.0f, 0.0f, 100.0f) * mMatrixRotate;
+	//mPoint = mPosition + CVector(0.0f, 0.0f, 100.0f) * mMatrixRotate;
+	mPoint = CPlayer::spThis->mPosition;
 }
 
 //更新処理
@@ -142,11 +143,12 @@ void CEnemy2::Update() {
 
 	//移動する
 	//mPosition = mPosition + CVector(0.0f, 0.0f, VELOCITY) * mMatrixRotate;
+	mPosition = mPosition + vp.Normalize()*VELOCITY;
 
 	CTransform::Update();	//行列更新
 
 	//およそ3秒毎に目標地点を更新
-	int r = rand() % 180;	//rand()は整数の乱数を返す
+	int r = rand() % 60;	//rand()は整数の乱数を返す
 							//% 180 は180で割った余りを求める
 	if (r == 0)
 	{
