@@ -6,7 +6,10 @@
 #include "CColliderMesh.h"
 #include "CTaskManager.h"
 #include "CCollisionManager.h"
+#include "CInput.h"
+#include "CEnemy2.h"
 CVector mEye;
+CModel mModelC5;
 
 //モデルからコライダを生成
 CColliderMesh mColliderMesh;
@@ -26,6 +29,12 @@ void CSceneGame::Init() {
 	mPlayer.mScale = CVector(1.0f, 1.0f, 1.0f);
 	mPlayer.mPosition = CVector(0.0f, 0.0f, -3.0f);
 	mPlayer.mRotation = CVector(0.0f, 180.0f, 0.0f);
+
+	//敵C5モデルの読み込み
+	mModelC5.Load("c5.obj", "c5.mtl");
+	new CEnemy2(CVector(-5.0f, 1.0f, -30.0f),
+		CVector(), CVector(0.1f, 0.1f, 0.1f));
+
 	//背景モデルから三角コライダを生成
 	//親インスタンスと親行列は無し
 	mColliderMesh.Set(NULL, NULL, &mBackGround);
@@ -33,6 +42,17 @@ void CSceneGame::Init() {
 
 
 void CSceneGame::Update() {
+	//マウスカーソルの座標を取得
+	int px, py;
+	CInput::GetMousePos(&px, &py);
+	if (py < CPlayer::spThis->mMouseY) {
+		//マウスの移動量の分だけ回転
+		mEye.mY += (CPlayer::spThis->mMouseY - py) / 4.0;
+	}
+	if (CPlayer::spThis->mMouseY < py) {
+		//マウスの移動量の分だけ回転
+		mEye.mY += (CPlayer::spThis->mMouseY - py) / 4.0;
+	}
 	//タスクマネージャの更新
 	CTaskManager::Get()->Update();
 	CTaskManager::Get()->TaskCollision();
@@ -62,5 +82,7 @@ void CSceneGame::Update() {
 	CTaskManager::Get()->Render();
 
 	CCollisionManager::Get()->Render();
+	//マウスカーソルを起動時の座標に移動
+	CInput::SetMousePos(CPlayer::spThis->mMouseX, CPlayer::spThis->mMouseY);
 }
 

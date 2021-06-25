@@ -14,6 +14,7 @@
 #include "CEffect.h"
 #include "CColliderMesh.h"
 #include <Windows.h>
+#include "CInput.h"
 
 CPlayer *CPlayer::spThis = 0;
 
@@ -26,26 +27,38 @@ CPlayer *CPlayer::spThis = 0;
 
 
 CPlayer::CPlayer()
-:/* mLine(this, &mMatrix, CVector(0.0f, 0.0f, -5.0f), CVector(0.0f, 0.0f, 5.0f))
-, mLine2(this, &mMatrix, CVector(0.0f, 2.0f, -8.0f), CVector(0.0f, -2.0f, -8.0f))
-, mLine3(this, &mMatrix, CVector(5.0f, 0.0f, -8.0f), CVector(-5.0f, 0.0f, -8.0f))
+: mLine(this, &mMatrix, CVector(0.0f, 0.0f, -5.0f), CVector(0.0f, 0.0f, 5.0f))
+, mLine2(this, &mMatrix, CVector(0.0f, 2.0f, 0.0f), CVector(0.0f, -2.0f, 0.0f))
+, mLine3(this, &mMatrix, CVector(5.0f, 0.0f, 0.0f), CVector(-5.0f, 0.0f, 0.0f))
 , mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.5f)
-, */mVelocityX(0.0)
+, mVelocityX(0.0)
 , mVelocityZ(0.0)
 , mXMoveRange(0.0)
 , mZMoveRange(0.0)
+, mMouseX(0)
+, mMouseY(0)
 {
 	mTag = EPLAYER;	//タグの設定
 	spThis = this;
 	//テクスチャファイルの読み込み（1行64列）
 	mText.LoadTexture("FontWhite.tga", 1, 64);
+	//起動時のマウスカーソルの座標を覚える
+	CInput::GetMousePos(&mMouseX, &mMouseY);
 }
 
 //更新処理
 void CPlayer::Update() {
-	//マウス位置取得
-	POINT MousePoint;
-	GetCursorPos(&MousePoint);
+	//マウスカーソルの座標を取得
+	int px, py;
+	CInput::GetMousePos(&px, &py);
+	if (px < mMouseX) {
+		//マウスの移動量の分だけ回転
+		mRotation.mY += (mMouseX - px) / 15.0;
+	}
+	if (mMouseX < px) {
+		//マウスの移動量の分だけ回転
+		mRotation.mY += (mMouseX - px) / 15.0;
+	}
 	////これより下、移動処理////
 	//Aキー入力で左移動
 	if (CKey::Push('A')) {
@@ -94,11 +107,7 @@ void CPlayer::Update() {
 	mXMoveRange = mVelocityX;
 	mZMoveRange = mVelocityZ;
 	//shiftキーを押しながら移動でダッシュ
-	if (CKey::Push('A') && CKey::Push('W') || CKey::Push('A') && CKey::Push('S') ||
-		CKey::Push('W') && CKey::Push('D') || CKey::Push('S') && CKey::Push('D')){
-		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * MOVEADJUST *mMatrix;
-	}
-	else if (CKey::Push(VK_SHIFT)){
+	if (CKey::Push(VK_SHIFT)){
 		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * RUNSPEED * mMatrix;
 	}
 	else {
@@ -106,8 +115,6 @@ void CPlayer::Update() {
 	}
 	////移動処理終わり////
 
-	//マウス位置をプレイヤーY軸回転に変換
-	mRotation.mY = -MousePoint.x / 4;
 
 	//CTransformの更新
 	CTransform::Update();
@@ -149,15 +156,15 @@ void CPlayer::Collision(CCollider *m, CCollider *o) {
 void CPlayer::TaskCollision()
 {
 	//コライダの優先度変更
-	//mLine.ChangePriority();
-	//mLine2.ChangePriority();
-	//mLine3.ChangePriority();
-	//mCollider.ChangePriority();
+	mLine.ChangePriority();
+	mLine2.ChangePriority();
+	mLine3.ChangePriority();
+	mCollider.ChangePriority();
 	//衝突処理を実行
-	/*CCollisionManager::Get()->Collision(&mLine, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mLine, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine2, COLLISIONRANGE);
-	CCollisionManager::Get()->Collision(&mLine3, COLLISIONRANGE);*/
-	//CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mLine3, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
 }
 
 void CPlayer::Render()
@@ -174,15 +181,15 @@ void CPlayer::Render()
 
 	//Y座標の表示
 	//文字列の設定
-	sprintf(buf, "X_SPEED:%f",mXMoveRange );
+	//sprintf(buf, "X_SPEED:%f",mXMoveRange );
 	//文字列の描画
-	mText.DrawString(buf, 100, 30, 8, 16);
+	//mText.DrawString(buf, 100, 30, 8, 16);
 
 	//X軸回転値の表示
 	//文字列の設定
-	sprintf(buf, "Z_SPEED:%f", mZMoveRange);
+	//sprintf(buf, "Z_SPEED:%f", mZMoveRange);
 	//文字列の描画
-	mText.DrawString(buf, 100, 0, 8, 16);
+	//mText.DrawString(buf, 100, 0, 8, 16);
 	//
 	////Y軸回転値の表示
 	////文字列の設定

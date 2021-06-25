@@ -54,6 +54,7 @@ void CTexture::Load(const char* filename) {//ファイル名の退避
 		| SOIL_FLAG_COMPRESS_TO_DXT
 		| SOIL_FLAG_DDS_LOAD_DIRECT
 		| SOIL_FLAG_INVERT_Y
+		| SOIL_FLAG_TEXTURE_REPEATS
 		);
 	//データの解放
 	SOIL_free_image_data(data);

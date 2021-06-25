@@ -37,6 +37,9 @@ public:
 	float mVelocityZ;		//速度
 	float mXMoveRange;	//X軸移動量
 	float mZMoveRange;	//Z軸移動量
+	//起動時のマウスカーソルの座標を覚える
+	int mMouseX;
+	int mMouseY;
 
 };
 

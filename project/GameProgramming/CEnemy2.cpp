@@ -120,7 +120,7 @@ void CEnemy2::Update() {
 	CVector vp = mPoint - mPosition;
 	float dx = vp.Dot(vx);	//左ベクトルとの内積を求める
 	float dy = vp.Dot(vy);	//上ベクトルとの内積を求める
-	float margin = 0.1f;
+	float margin = 1.0f;
 	//左右方向へ回転
 	if (dx > margin)
 	{
@@ -141,7 +141,7 @@ void CEnemy2::Update() {
 	}
 
 	//移動する
-	mPosition = mPosition + CVector(0.0f, 0.0f, VELOCITY) * mMatrixRotate;
+	//mPosition = mPosition + CVector(0.0f, 0.0f, VELOCITY) * mMatrixRotate;
 
 	CTransform::Update();	//行列更新
 
