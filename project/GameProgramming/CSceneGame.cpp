@@ -27,7 +27,7 @@ void CSceneGame::Init() {
 	mBackGround.Load("sky.obj", "sky.mtl");
 	mPlayer.mpModel = &mModel;
 	mPlayer.mScale = CVector(1.0f, 1.0f, 1.0f);
-	mPlayer.mPosition = CVector(0.0f, 0.0f, -3.0f);
+	mPlayer.mPosition = CVector(0.0f, 1.0f, -3.0f);
 	mPlayer.mRotation = CVector(0.0f, 180.0f, 0.0f);
 
 	//ìGC5ÉÇÉfÉãÇÃì«Ç›çûÇ›
