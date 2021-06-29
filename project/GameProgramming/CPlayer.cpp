@@ -31,7 +31,7 @@ CPlayer::CPlayer()
 , mLine2(this, &mMatrix, CVector(0.0f, 2.0f, 0.0f), CVector(0.0f, -2.0f, 0.0f))
 , mLine3(this, &mMatrix, CVector(5.0f, 0.0f, 0.0f), CVector(-5.0f, 0.0f, 0.0f))
 , mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.5f)
-, mAttackCollider(this,&mMatrix,CVector(-1.0f,3.0f,-2.0f),0.5f)
+//, mAttackCollider(this,&mMatrix,CVector(-1.0f,3.0f,-2.0f),0.5f)
 , mVelocityX(0.0)
 , mVelocityZ(0.0)
 , mXMoveRange(0.0)
@@ -117,7 +117,6 @@ void CPlayer::Update() {
 	////移動処理終わり////
 
 
-
 	//CTransformの更新
 	CTransform::Update();
 }
@@ -162,13 +161,13 @@ void CPlayer::TaskCollision()
 	mLine2.ChangePriority();
 	mLine3.ChangePriority();
 	mCollider.ChangePriority();
-	mAttackCollider.ChangePriority();
+	//mAttackCollider.ChangePriority();
 	//衝突処理を実行
 	CCollisionManager::Get()->Collision(&mLine, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine2, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine3, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
-	CCollisionManager::Get()->Collision(&mAttackCollider, COLLISIONRANGE);
+	//CCollisionManager::Get()->Collision(&mAttackCollider, COLLISIONRANGE);
 }
 
 void CPlayer::Render()

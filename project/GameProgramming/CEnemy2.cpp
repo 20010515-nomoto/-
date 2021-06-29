@@ -12,8 +12,7 @@
 
 CModel CEnemy2::mModel;	//モデルデータ作成
 
-#define FIRECOUNT 15	//発射間隔
-
+//#define FIRECOUNT 15	//発射間隔
 
 CEnemy2::CEnemy2()
 : mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.4f)
@@ -81,46 +80,47 @@ void CEnemy2::Update() {
 	//前方向（Z軸）のベクトルを求める
 	CVector vz = CVector(0.0f, 0.0f, 1.0f) * mMatrixRotate;
 
-	if (mFireCount > 0)
-	{
-		mFireCount--;
-	}
-	else
-	{
-		//プレイヤーのポインタが0以外の時
-		if (mpPlayer)
-		{
-			//プレイヤーまでのベクトルを求める
-			CVector vp = mpPlayer->mPosition - mPosition;
-			float dx = vp.Dot(vx);	//左ベクトルとの内積を求める
-			float dy = vp.Dot(vy);	//上ベクトルとの内積を求める
-			float dz = vp.Dot(vz);
+	//if (mFireCount > 0)
+	//{
+	//	mFireCount--;
+	//}
+	//else
+	//{
+	//	//プレイヤーのポインタが0以外の時
+	//	if (mpPlayer)
+	//	{
+	//		//プレイヤーまでのベクトルを求める
+	//		CVector vp = mpPlayer->mPosition - mPosition;
+	//		float dx = vp.Dot(vx);	//左ベクトルとの内積を求める
+	//		float dy = vp.Dot(vy);	//上ベクトルとの内積を求める
+	//		float dz = vp.Dot(vz);
 
-			//X軸のズレが2.0以下
-			if (-2.0f < dx && dx < 2.0f)
-			{
-				//Y軸のズレが2.0以下
-				if (-2.0f < dy && dy < 2.0f)
-				{
-					if (dz > 0.0f)
-					{
-						mFireCount = FIRECOUNT;
-						//弾を発射します
-						CBullet *bullet = new CBullet();
-						bullet->Set(0.1f, 1.5f);
-						bullet->mPosition = CVector(0.0f, 0.0f, 10.0f) * mMatrix;
-						bullet->mRotation = mRotation;
-						bullet->Update();
-					}
-				}
-			}
-		}
-	}
+	//		//X軸のズレが2.0以下
+	//		if (-2.0f < dx && dx < 2.0f)
+	//		{
+	//			//Y軸のズレが2.0以下
+	//			if (-2.0f < dy && dy < 2.0f)
+	//			{
+	//				if (dz > 0.0f)
+	//				{
+	//					mFireCount = FIRECOUNT;
+	//					//弾を発射します
+	//					CBullet *bullet = new CBullet();
+	//					bullet->Set(0.1f, 1.5f);
+	//					bullet->mPosition = CVector(0.0f, 0.0f, 10.0f) * mMatrix;
+	//					bullet->mRotation = mRotation;
+	//					bullet->Update();
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	//目標地点までのベクトルを求める
 	CVector vp = mPoint - mPosition;
 	float dx = vp.Dot(vx);	//左ベクトルとの内積を求める
 	float dy = vp.Dot(vy);	//上ベクトルとの内積を求める
+	float dz = vp.Dot(vz);
 	float margin = 1.0f;
 	//左右方向へ回転
 	if (dx > margin)
@@ -140,15 +140,17 @@ void CEnemy2::Update() {
 	{
 		mRotation.mX += 1.0f;
 	}
+	if (dz>0.0f&&-3.0f < dx&&dx < 3.0f){
+		mPosition = mPosition + vp.Normalize() * VELOCITY;
+	}
 
 	//移動する
 	//mPosition = mPosition + CVector(0.0f, 0.0f, VELOCITY) * mMatrixRotate;
-	mPosition = mPosition + vp.Normalize()*VELOCITY;
 
 	CTransform::Update();	//行列更新
 
 	//およそ3秒毎に目標地点を更新
-	int r = rand() % 60;	//rand()は整数の乱数を返す
+	int r = rand() % 30;	//rand()は整数の乱数を返す
 							//% 180 は180で割った余りを求める
 	if (r == 0)
 	{
