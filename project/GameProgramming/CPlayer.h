@@ -42,6 +42,12 @@ public:
 	int mMouseX;
 	int mMouseY;
 
+	int mStamina;		//スタミナ：各行動時に消費
+	bool mAction_Decision;	//アクション判定 true:アクション中	false:アクションしていない
+
+	int mAttackCount;	//攻撃中判断
+	bool mDefense_Decision;	//防御中判断 true:防御中 false:防御していない
+
 };
 
 #endif

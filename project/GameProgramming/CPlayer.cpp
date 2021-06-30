@@ -24,6 +24,11 @@ CPlayer *CPlayer::spThis = 0;
 #define VELOCITYMIN -0.2	//移動スピード最小値
 #define MOVEADJUST 0.7		//斜め移動時の移動量調整値
 #define RUNSPEED 1.5		//ダッシュスピード
+#define DODGESPEED 1.3		//回避スピード
+#define STAMINA 100			//スタミナ上限
+#define ATTACKCOUNT 180		//攻撃モーション中
+#define ATTACK_STAMINA 40	//攻撃消費スタミナ
+#define DEFENSE_STAMINA 40	//防御消費スタミナ
 
 
 CPlayer::CPlayer()
@@ -38,6 +43,10 @@ CPlayer::CPlayer()
 , mZMoveRange(0.0)
 , mMouseX(0)
 , mMouseY(0)
+, mStamina(0)
+, mAction_Decision(false)
+, mAttackCount(0)
+, mDefense_Decision(false)
 {
 	mTag = EPLAYER;	//タグの設定
 	spThis = this;
@@ -45,10 +54,15 @@ CPlayer::CPlayer()
 	mText.LoadTexture("FontWhite.tga", 1, 64);
 	//起動時のマウスカーソルの座標を覚える
 	CInput::GetMousePos(&mMouseX, &mMouseY);
+	mStamina = STAMINA;
 }
 
 //更新処理
 void CPlayer::Update() {
+	//攻撃、防御判定確認のため色を白に設定
+	mpModel->mpMaterials[0]->mDiffuse[0] = 1.0f;
+	mpModel->mpMaterials[0]->mDiffuse[1] = 1.0f;
+	mpModel->mpMaterials[0]->mDiffuse[2] = 1.0f;
 	//マウスカーソルの座標を取得
 	int px, py;
 	CInput::GetMousePos(&px, &py);
@@ -109,12 +123,58 @@ void CPlayer::Update() {
 	mZMoveRange = mVelocityZ;
 	//shiftキーを押しながら移動でダッシュ
 	if (CKey::Push(VK_SHIFT)){
-		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * RUNSPEED * mMatrix;
+		if (mStamina>0){
+			mStamina--;
+		}
+		mAction_Decision = true;
+		if (mStamina>0){
+			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * RUNSPEED * mMatrix;
+		}
+		else{
+			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
+		}
 	}
 	else {
 		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
 	}
 	////移動処理終わり////
+
+	////攻撃処理(モデルが未定なため、攻撃中は色を変えてます)////
+	if (CKey::Once(VK_LBUTTON) && mStamina >= ATTACK_STAMINA){
+		mAttackCount = ATTACKCOUNT;
+		mStamina -= ATTACK_STAMINA;
+		mAction_Decision = true;
+	}
+	if (mAttackCount > 0){
+		mAttackCount--;
+		mpModel->mpMaterials[0]->mDiffuse[0] = 1.0f;
+		mpModel->mpMaterials[0]->mDiffuse[1] = 0.0f;
+		mpModel->mpMaterials[0]->mDiffuse[2] = 0.0f;
+	}
+	////攻撃処理終了////
+
+	////防御処理(モデルが未定なため、防御中は色を変えてます)////
+	if (CKey::Push(VK_RBUTTON)){
+		mAction_Decision = true;
+		mDefense_Decision = true;
+	}
+	else{
+		mDefense_Decision = false;
+		mAction_Decision = false;
+	}
+	if (mDefense_Decision == true){
+		mpModel->mpMaterials[0]->mDiffuse[0] = 1.0f;
+		mpModel->mpMaterials[0]->mDiffuse[1] = 0.3f;
+		mpModel->mpMaterials[0]->mDiffuse[2] = 0.0f;
+	}
+	////防御処理終了////
+
+
+	if (mAction_Decision == false){
+		if (mStamina < STAMINA){
+			mStamina++;
+		}
+	}
 
 
 	//CTransformの更新
@@ -148,6 +208,9 @@ void CPlayer::Collision(CCollider *m, CCollider *o) {
 			{
 				//エフェクト生成
 				new CEffect(o->mpParent->mPosition, 1.0f, 1.0f, "exp.tga", 4, 4, 2);
+				if (mDefense_Decision == true && mStamina >= DEFENSE_STAMINA){
+					mStamina -= DEFENSE_STAMINA;
+				}
 			}
 		}
 		break;
@@ -199,6 +262,8 @@ void CPlayer::Render()
 	//sprintf(buf, "RY:%7.2f", mRotation.mY);
 	////文字列の描画
 	//mText.DrawString(buf, 100, -100, 8, 16);
+	sprintf(buf, "STAMINA%d", mStamina);
+	mText.DrawString(buf, 100, -100, 8, 16);
 
 	//2Dの描画終了
 	CUtil::End2D();
