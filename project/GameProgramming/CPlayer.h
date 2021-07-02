@@ -43,10 +43,13 @@ public:
 	int mMouseY;
 
 	int mStamina;		//スタミナ：各行動時に消費
-	bool mAction_Decision;	//アクション判定 true:アクション中	false:アクションしていない
+	bool mAction_Decision;	//アクション判定 true:アクション中
 
 	int mAttackCount;	//攻撃中判断
-	bool mDefense_Decision;	//防御中判断 true:防御中 false:防御していない
+	bool mDefense_Decision;	//防御中判断 true:防御中
+
+	bool mDodge_Decision;	//回避中判断 true:回避中
+	int mInvincible_Time;	//無敵時間
 
 };
 

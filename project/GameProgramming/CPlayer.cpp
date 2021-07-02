@@ -24,11 +24,13 @@ CPlayer *CPlayer::spThis = 0;
 #define VELOCITYMIN -0.2	//移動スピード最小値
 #define MOVEADJUST 0.7		//斜め移動時の移動量調整値
 #define RUNSPEED 1.5		//ダッシュスピード
-#define DODGESPEED 1.3		//回避スピード
+#define DODGESPEED 2		//回避スピード
 #define STAMINA 100			//スタミナ上限
 #define ATTACKCOUNT 180		//攻撃モーション中
 #define ATTACK_STAMINA 40	//攻撃消費スタミナ
 #define DEFENSE_STAMINA 40	//防御消費スタミナ
+#define DODGE_STAMINA 80	//回避消費スタミナ
+#define INVINCIBLE_TIME 60	//無敵時間
 
 
 CPlayer::CPlayer()
@@ -47,6 +49,8 @@ CPlayer::CPlayer()
 , mAction_Decision(false)
 , mAttackCount(0)
 , mDefense_Decision(false)
+, mDodge_Decision(false)
+, mInvincible_Time(0)
 {
 	mTag = EPLAYER;	//タグの設定
 	spThis = this;
@@ -134,13 +138,17 @@ void CPlayer::Update() {
 			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
 		}
 	}
+	else if (mDodge_Decision == true){
+		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) *DODGESPEED* mMatrix;
+	}
 	else {
 		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
 	}
 	////移動処理終わり////
 
-	////攻撃処理(モデルが未定なため、攻撃中は色を変えてます)////
-	if (CKey::Once(VK_LBUTTON) && mStamina >= ATTACK_STAMINA){
+	////攻撃処理(モデルが未定なため、攻撃中は色を変えてます※デバッグのみ)////
+	if (CKey::Once(VK_LBUTTON) && mStamina >= ATTACK_STAMINA
+		&&mAction_Decision==false){
 		mAttackCount = ATTACKCOUNT;
 		mStamina -= ATTACK_STAMINA;
 		mAction_Decision = true;
@@ -153,7 +161,7 @@ void CPlayer::Update() {
 	}
 	////攻撃処理終了////
 
-	////防御処理(モデルが未定なため、防御中は色を変えてます)////
+	////防御処理(モデルが未定なため、防御中は色を変えてます※デバッグのみ)////
 	if (CKey::Push(VK_RBUTTON)){
 		mAction_Decision = true;
 		mDefense_Decision = true;
@@ -169,6 +177,23 @@ void CPlayer::Update() {
 	}
 	////防御処理終了////
 
+	////回避処理(回避中の無敵時間は分かりやすいように色を変えてます※デバッグのみ)////
+	if (CKey::Once(' ')&&mStamina>DODGE_STAMINA){
+		mDodge_Decision = true;
+		mStamina -= DODGE_STAMINA;
+		mInvincible_Time = INVINCIBLE_TIME;
+	}
+	if (mInvincible_Time > 0){
+		mInvincible_Time--;
+	}
+	else {
+		mDodge_Decision = false;
+	}
+	if (mDodge_Decision == true){
+		mpModel->mpMaterials[0]->mDiffuse[0] = 0.0f;
+		mpModel->mpMaterials[0]->mDiffuse[1] = 0.0f;
+		mpModel->mpMaterials[0]->mDiffuse[2] = 1.0f;
+	}
 
 	if (mAction_Decision == false){
 		if (mStamina < STAMINA){
@@ -203,13 +228,15 @@ void CPlayer::Collision(CCollider *m, CCollider *o) {
 		break;
 	case CCollider::ESPHERE:
 		//相手のコライダが球コライダの時
-		if (o->mType == CCollider::ESPHERE) {
-			if (CCollider::Collision(m, o))
-			{
-				//エフェクト生成
-				new CEffect(o->mpParent->mPosition, 1.0f, 1.0f, "exp.tga", 4, 4, 2);
-				if (mDefense_Decision == true && mStamina >= DEFENSE_STAMINA){
-					mStamina -= DEFENSE_STAMINA;
+		if (mDodge_Decision == true){
+			if (o->mType == CCollider::ESPHERE) {
+				if (CCollider::Collision(m, o))
+				{
+					//エフェクト生成
+					new CEffect(o->mpParent->mPosition, 1.0f, 1.0f, "exp.tga", 4, 4, 2);
+					if (mDefense_Decision == true && mStamina >= DEFENSE_STAMINA){
+						mStamina -= DEFENSE_STAMINA;
+					}
 				}
 			}
 		}
