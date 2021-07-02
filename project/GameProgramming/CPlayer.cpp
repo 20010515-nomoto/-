@@ -181,7 +181,7 @@ void CPlayer::Update() {
 	if (CKey::Once(' ')&&mStamina>DODGE_STAMINA){
 		mDodge_Decision = true;
 		mStamina -= DODGE_STAMINA;
-		mInvincible_Time = INVINCIBLE_TIME;
+		mInvincible_Time = INVINCIBLE_TIME / 2;
 	}
 	if (mInvincible_Time > 0){
 		mInvincible_Time--;
