@@ -14,6 +14,9 @@ public:
 	{
 		EBODY,		//本体
 		ESEARCH,	//サーチ用
+		EENEMY_ATTACK_RANGE,	//敵攻撃範囲
+		EENEMY_ATTACK,			//敵攻撃判定
+		EPLAYER_ATTACK,		//プレイヤー攻撃用
 	};
 	ETag mTag;
 	//コライダタイプ

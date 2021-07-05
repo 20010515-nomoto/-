@@ -15,6 +15,7 @@
 #include "CColliderMesh.h"
 #include <Windows.h>
 #include "CInput.h"
+#include "CEnemy2.h"
 
 CPlayer *CPlayer::spThis = 0;
 
@@ -26,11 +27,12 @@ CPlayer *CPlayer::spThis = 0;
 #define RUNSPEED 1.5		//ダッシュスピード
 #define DODGESPEED 2		//回避スピード
 #define STAMINA 100			//スタミナ上限
-#define ATTACKCOUNT 180		//攻撃モーション中
+#define ATTACKCOUNT 120		//攻撃モーション中
 #define ATTACK_STAMINA 40	//攻撃消費スタミナ
 #define DEFENSE_STAMINA 40	//防御消費スタミナ
 #define DODGE_STAMINA 80	//回避消費スタミナ
 #define INVINCIBLE_TIME 60	//無敵時間
+#define PLAYERHP 100		//プレイヤーHP
 
 
 CPlayer::CPlayer()
@@ -38,7 +40,7 @@ CPlayer::CPlayer()
 , mLine2(this, &mMatrix, CVector(0.0f, 2.0f, 0.0f), CVector(0.0f, -2.0f, 0.0f))
 , mLine3(this, &mMatrix, CVector(5.0f, 0.0f, 0.0f), CVector(-5.0f, 0.0f, 0.0f))
 , mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.5f)
-//, mAttackCollider(this,&mMatrix,CVector(-1.0f,3.0f,-2.0f),0.5f)
+, mAttackCollider(this,&mMatrix,CVector(0.0f,0.0f,0.0f),3.0f)
 , mVelocityX(0.0)
 , mVelocityZ(0.0)
 , mXMoveRange(0.0)
@@ -51,6 +53,7 @@ CPlayer::CPlayer()
 , mDefense_Decision(false)
 , mDodge_Decision(false)
 , mInvincible_Time(0)
+, mPlayerHp(PLAYERHP)
 {
 	mTag = EPLAYER;	//タグの設定
 	spThis = this;
@@ -59,6 +62,7 @@ CPlayer::CPlayer()
 	//起動時のマウスカーソルの座標を覚える
 	CInput::GetMousePos(&mMouseX, &mMouseY);
 	mStamina = STAMINA;
+	mAttackCollider.mTag = CCollider::EPLAYER_ATTACK;
 }
 
 //更新処理
@@ -227,15 +231,27 @@ void CPlayer::Collision(CCollider *m, CCollider *o) {
 		}
 		break;
 	case CCollider::ESPHERE:
-		//相手のコライダが球コライダの時
-		if (mDodge_Decision == true){
-			if (o->mType == CCollider::ESPHERE) {
-				if (CCollider::Collision(m, o))
-				{
-					//エフェクト生成
-					new CEffect(o->mpParent->mPosition, 1.0f, 1.0f, "exp.tga", 4, 4, 2);
-					if (mDefense_Decision == true && mStamina >= DEFENSE_STAMINA){
-						mStamina -= DEFENSE_STAMINA;
+		if (m->mTag == CCollider::EBODY){
+			//相手のコライダが球コライダの時
+			if (mDodge_Decision == false){
+				if (o->mType == CCollider::ESPHERE) {
+					if (o->mTag == CCollider::EENEMY_ATTACK){
+						if (CEnemy2::spThis->mAcquisitionFlg==true){
+							if (mInvincible_Time <= 0){
+								if (CCollider::Collision(m, o))
+								{
+									mInvincible_Time = INVINCIBLE_TIME;
+									if (mDefense_Decision == true && mStamina >= DEFENSE_STAMINA){
+										mStamina -= DEFENSE_STAMINA;
+									}
+									else{
+										//エフェクト生成
+										new CEffect(o->mpParent->mPosition, 3.0f, 3.0f, "exp.tga", 4, 4, 2);
+										mPlayerHp -= 20;
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -251,13 +267,13 @@ void CPlayer::TaskCollision()
 	mLine2.ChangePriority();
 	mLine3.ChangePriority();
 	mCollider.ChangePriority();
-	//mAttackCollider.ChangePriority();
+	mAttackCollider.ChangePriority();
 	//衝突処理を実行
 	CCollisionManager::Get()->Collision(&mLine, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine2, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine3, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
-	//CCollisionManager::Get()->Collision(&mAttackCollider, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mAttackCollider, COLLISIONRANGE);
 }
 
 void CPlayer::Render()
@@ -291,6 +307,9 @@ void CPlayer::Render()
 	//mText.DrawString(buf, 100, -100, 8, 16);
 	sprintf(buf, "STAMINA%d", mStamina);
 	mText.DrawString(buf, 100, -100, 8, 16);
+
+	sprintf(buf, "HP%d", mPlayerHp);
+	mText.DrawString(buf, 100, -120, 8, 16);
 
 	//2Dの描画終了
 	CUtil::End2D();

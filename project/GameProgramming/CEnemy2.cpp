@@ -13,16 +13,24 @@
 CModel CEnemy2::mModel;	//モデルデータ作成
 
 //#define FIRECOUNT 15	//発射間隔
+CEnemy2 *CEnemy2::spThis = 0;
 
 CEnemy2::CEnemy2()
 : mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.4f)
-, mColSearch(this, &mMatrix, CVector(0.0f, 0.0f, 100.0f), 30.0f)
+, mColSearch(this, &mMatrix, CVector(0.0f, 0.0f, 100.0f), 15.0f)
+, mColAttackRange(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 2.0f)
+, mColAttack(this, &mMatrix, CVector(0.0f, 0.0f, -2.0f), 2.0f)
 , mpPlayer(0)
 , mHp(HP)
 , mFireCount(0)
+, mAttackFlg(false)
+, mAcquisitionFlg(false)
 {
+	//タグ設定
 	mTag = EENEMY;
-	mColSearch.mTag = CCollider::ESEARCH;	//タグ設定
+	mColSearch.mTag = CCollider::ESEARCH;
+	mColAttackRange.mTag = CCollider::EENEMY_ATTACK_RANGE;
+	mColAttack.mTag = CCollider::EENEMY_ATTACK;		
 
 	//モデルが無いときは読み込む
 	if (mModel.mTriangles.size() == 0)
@@ -31,6 +39,7 @@ CEnemy2::CEnemy2()
 	}
 	//モデルのポインタ設定
 	mpModel = &mModel;
+	spThis = this;
 }
 
 
@@ -80,42 +89,6 @@ void CEnemy2::Update() {
 	//前方向（Z軸）のベクトルを求める
 	CVector vz = CVector(0.0f, 0.0f, 1.0f) * mMatrixRotate;
 
-	//if (mFireCount > 0)
-	//{
-	//	mFireCount--;
-	//}
-	//else
-	//{
-	//	//プレイヤーのポインタが0以外の時
-	//	if (mpPlayer)
-	//	{
-	//		//プレイヤーまでのベクトルを求める
-	//		CVector vp = mpPlayer->mPosition - mPosition;
-	//		float dx = vp.Dot(vx);	//左ベクトルとの内積を求める
-	//		float dy = vp.Dot(vy);	//上ベクトルとの内積を求める
-	//		float dz = vp.Dot(vz);
-
-	//		//X軸のズレが2.0以下
-	//		if (-2.0f < dx && dx < 2.0f)
-	//		{
-	//			//Y軸のズレが2.0以下
-	//			if (-2.0f < dy && dy < 2.0f)
-	//			{
-	//				if (dz > 0.0f)
-	//				{
-	//					mFireCount = FIRECOUNT;
-	//					//弾を発射します
-	//					CBullet *bullet = new CBullet();
-	//					bullet->Set(0.1f, 1.5f);
-	//					bullet->mPosition = CVector(0.0f, 0.0f, 10.0f) * mMatrix;
-	//					bullet->mRotation = mRotation;
-	//					bullet->Update();
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
-
 	//目標地点までのベクトルを求める
 	CVector vp = mPoint - mPosition;
 	float dx = vp.Dot(vx);	//左ベクトルとの内積を求める
@@ -140,8 +113,14 @@ void CEnemy2::Update() {
 	{
 		mRotation.mX += 1.0f;
 	}
-	if (dz>0.0f&&-3.0f < dx&&dx < 3.0f){
-		mPosition = mPosition + vp.Normalize() * VELOCITY;
+	if (mAttackFlg == false){
+		if (dz>0.0f&&-3.0f < dx&&dx < 3.0f){
+			mPosition = mPosition + vp.Normalize() * VELOCITY;
+			mAcquisitionFlg = true;
+		}
+		else{
+			mAcquisitionFlg = false;
+		}
 	}
 
 	//移動する
@@ -165,7 +144,6 @@ void CEnemy2::Update() {
 	}
 
 	mpPlayer = 0;
-
 }
 //衝突処理
 //Collision(コライダ1, コライダ2)
@@ -194,15 +172,33 @@ void CEnemy2::Collision(CCollider *m, CCollider *o) {
 		}
 		return;
 	}
+	//敵の攻撃距離にプレイヤーがいるかどうかの判定
+	if (m->mTag == CCollider::EENEMY_ATTACK_RANGE){
+		if (o->mType == CCollider::ESPHERE){
+			if (o->mpParent->mTag == EPLAYER){
+				if (CCollider::Collision(m, o)){
+					mAttackFlg = true;
+				}
+				else{
+					mAttackFlg = false;
+				}
+			}
+		}
+		return;
+	}
 
 	switch (o->mType)
 	{
 	case CCollider::ESPHERE:
 		//コライダのmとyが衝突しているか判定
-		if (CCollider::Collision(m, o)) {
-			//エフェクト生成
-			new CEffect(o->mpParent->mPosition, 1.0f, 1.0f, "exp.tga", 4, 4, 2);
-			mHp--;	//ヒットポイントの減算
+		if (o->mTag == CCollider::EPLAYER_ATTACK){
+			if (CPlayer::spThis->mAttackCount > 0){
+				if (CCollider::Collision(m, o)) {
+					//エフェクト生成
+					new CEffect(o->mpParent->mPosition, 1.0f, 1.0f, "exp.tga", 4, 4, 2);
+					mHp--;	//ヒットポイントの減算
+				}
+			}
 		}
 		break;
 	case CCollider::ETRIANGLE:	//三角コライダの時
@@ -306,8 +302,12 @@ void CEnemy2::TaskCollision()
 {
 	mCollider.ChangePriority();
 	mColSearch.ChangePriority();
+	mColAttackRange.ChangePriority();
+	mColAttack.ChangePriority();
 //	mCollider3.ChangePriority();
 	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mColSearch, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mColAttackRange, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mColAttack, COLLISIONRANGE);
 //	CCollisionManager::Get()->Collision(&mCollider3, COLLISIONRANGE);
 }

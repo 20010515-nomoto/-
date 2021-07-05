@@ -9,6 +9,7 @@
 //
 #include "CText.h"
 #include <Windows.h>
+class CEnemy2;
 /*
 プレイヤークラス
 キャラクタクラスを継承
@@ -22,6 +23,8 @@ public:
 	CColliderLine mLine; //線分コライダ
 	CColliderLine mLine2;
 	CColliderLine mLine3;
+	CCollider mAttackCollider;	//攻撃判定
+
 	//デフォルトコンストラクタ
 	CPlayer();
 //	CBullet bullet;
@@ -51,6 +54,7 @@ public:
 	bool mDodge_Decision;	//回避中判断 true:回避中
 	int mInvincible_Time;	//無敵時間
 
+	int mPlayerHp;	//HP
 };
 
 #endif

@@ -21,9 +21,13 @@ public:
 	//モデルデータ
 	static CModel mModel;
 
+	static CEnemy2 *spThis;
+
 	//コライダ
 	CCollider mCollider;
 	CCollider mColSearch;	//サーチ用コライダ
+	CCollider mColAttackRange;	//攻撃範囲用コライダ
+	CCollider mColAttack;	//攻撃判定用コライダ
 
 	//コンストラクタ
 	CEnemy2();
@@ -35,6 +39,9 @@ public:
 	//Collision(コライダ1, コライダ2)
 	void Collision(CCollider *m, CCollider *o);
 	void TaskCollision();
+
+	bool mAcquisitionFlg;	//捕捉フラグ:敵がプレイヤーを捕捉しているかどうか true:している
+	bool mAttackFlg;	//攻撃フラグ:true 攻撃する
 };
 
 #endif
