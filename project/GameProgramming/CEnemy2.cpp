@@ -17,7 +17,7 @@ CEnemy2 *CEnemy2::spThis = 0;
 
 CEnemy2::CEnemy2()
 : mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.4f)
-, mColSearch(this, &mMatrix, CVector(0.0f, 0.0f, 100.0f), 15.0f)
+, mColSearch(this, &mMatrix, CVector(0.0f, 0.0f, 100.0f), 30.0f)
 , mColAttackRange(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 2.0f)
 , mColAttack(this, &mMatrix, CVector(0.0f, 0.0f, -2.0f), 2.0f)
 , mpPlayer(0)

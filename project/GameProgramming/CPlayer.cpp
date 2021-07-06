@@ -48,10 +48,11 @@ CPlayer::CPlayer()
 , mMouseX(0)
 , mMouseY(0)
 , mStamina(0)
-, mAction_Decision(false)
+, mRun_Decision(false)
 , mAttackCount(0)
 , mDefense_Decision(false)
 , mDodge_Decision(false)
+, mAttack_Decision(false)
 , mInvincible_Time(0)
 , mPlayerHp(PLAYERHP)
 {
@@ -67,7 +68,7 @@ CPlayer::CPlayer()
 
 //更新処理
 void CPlayer::Update() {
-	//攻撃、防御判定確認のため色を白に設定
+	//攻撃、防御確認のため色を白に設定
 	mpModel->mpMaterials[0]->mDiffuse[0] = 1.0f;
 	mpModel->mpMaterials[0]->mDiffuse[1] = 1.0f;
 	mpModel->mpMaterials[0]->mDiffuse[2] = 1.0f;
@@ -83,79 +84,81 @@ void CPlayer::Update() {
 		mRotation.mY += (mMouseX - px) / 15.0;
 	}
 	////これより下、移動処理////
-	//Aキー入力で左移動
-	if (CKey::Push('A')) {
-		if (mVelocityX < VELOCITYMAX){
-			mVelocityX += ACCELERATION;
+	if (mAttack_Decision == false && mDefense_Decision == false){
+		//Aキー入力で左移動
+		if (CKey::Push('A')) {
+			if (mVelocityX < VELOCITYMAX){
+				mVelocityX += ACCELERATION;
+			}
 		}
-	}
-	else {
-		if (mVelocityX>0){
-			mVelocityX -= ACCELERATION;
+		else {
+			if (mVelocityX>0){
+				mVelocityX -= ACCELERATION;
+			}
 		}
-	}
-	//Dキー入力で右移動
-	if (CKey::Push('D')) {
-		if (mVelocityX > VELOCITYMIN){
-			mVelocityX -= ACCELERATION;
+		//Dキー入力で右移動
+		if (CKey::Push('D')) {
+			if (mVelocityX > VELOCITYMIN){
+				mVelocityX -= ACCELERATION;
+			}
 		}
-	}
-	else {
-		if (mVelocityX<0){
-			mVelocityX += ACCELERATION;
+		else {
+			if (mVelocityX < 0){
+				mVelocityX += ACCELERATION;
+			}
 		}
-	}
-	//Wキー入力で前移動
-	if (CKey::Push('W')) {
-		if (mVelocityZ < VELOCITYMAX){
-			mVelocityZ += ACCELERATION;
+		//Wキー入力で前移動
+		if (CKey::Push('W')) {
+			if (mVelocityZ < VELOCITYMAX){
+				mVelocityZ += ACCELERATION;
+			}
 		}
-	}
-	else {
-		if (mVelocityZ>0){
-			mVelocityZ -= ACCELERATION;
+		else {
+			if (mVelocityZ>0){
+				mVelocityZ -= ACCELERATION;
+			}
 		}
-	}
-	//Sキー入力で後ろ移動
-	if (CKey::Push('S')) {
-		if (mVelocityZ > VELOCITYMIN){
-			mVelocityZ -= ACCELERATION;
+		//Sキー入力で後ろ移動
+		if (CKey::Push('S')) {
+			if (mVelocityZ > VELOCITYMIN){
+				mVelocityZ -= ACCELERATION;
+			}
 		}
-	}
-	else {
-		if (mVelocityZ<0){
-			mVelocityZ += ACCELERATION;
+		else {
+			if (mVelocityZ<0){
+				mVelocityZ += ACCELERATION;
+			}
 		}
-	}
-	mXMoveRange = mVelocityX;
-	mZMoveRange = mVelocityZ;
-	//shiftキーを押しながら移動でダッシュ
-	if (CKey::Push(VK_SHIFT)){
-		if (mStamina>0){
-			mStamina--;
+		mXMoveRange = mVelocityX;
+		mZMoveRange = mVelocityZ;
+		//shiftキーを押しながら移動でダッシュ
+		if (CKey::Push(VK_SHIFT)){
+			mRun_Decision = true;
+			if (mStamina>0){
+				mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * RUNSPEED * mMatrix;
+				mStamina--;
+			}
+			else{
+				mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
+			}
 		}
-		mAction_Decision = true;
-		if (mStamina>0){
-			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * RUNSPEED * mMatrix;
+		//スペースキーが押されたとき、回避
+		else if (mDodge_Decision == true){
+			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) *DODGESPEED* mMatrix;
 		}
-		else{
+		else {
 			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
+			mRun_Decision = false;
 		}
-	}
-	else if (mDodge_Decision == true){
-		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) *DODGESPEED* mMatrix;
-	}
-	else {
-		mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * mMatrix;
 	}
 	////移動処理終わり////
 
 	////攻撃処理(モデルが未定なため、攻撃中は色を変えてます※デバッグのみ)////
 	if (CKey::Once(VK_LBUTTON) && mStamina >= ATTACK_STAMINA
-		&&mAction_Decision==false){
+		&&mAttack_Decision == false){
 		mAttackCount = ATTACKCOUNT;
 		mStamina -= ATTACK_STAMINA;
-		mAction_Decision = true;
+		mAttack_Decision = true;
 	}
 	if (mAttackCount > 0){
 		mAttackCount--;
@@ -163,16 +166,17 @@ void CPlayer::Update() {
 		mpModel->mpMaterials[0]->mDiffuse[1] = 0.0f;
 		mpModel->mpMaterials[0]->mDiffuse[2] = 0.0f;
 	}
+	else{
+		mAttack_Decision = false;
+	}
 	////攻撃処理終了////
 
 	////防御処理(モデルが未定なため、防御中は色を変えてます※デバッグのみ)////
 	if (CKey::Push(VK_RBUTTON)){
-		mAction_Decision = true;
 		mDefense_Decision = true;
 	}
 	else{
 		mDefense_Decision = false;
-		mAction_Decision = false;
 	}
 	if (mDefense_Decision == true){
 		mpModel->mpMaterials[0]->mDiffuse[0] = 1.0f;
@@ -199,7 +203,8 @@ void CPlayer::Update() {
 		mpModel->mpMaterials[0]->mDiffuse[2] = 1.0f;
 	}
 
-	if (mAction_Decision == false){
+	if (mAttack_Decision == false && mDefense_Decision == false &&
+		mDodge_Decision == false && mRun_Decision == false){
 		if (mStamina < STAMINA){
 			mStamina++;
 		}
