@@ -27,7 +27,7 @@ CPlayer *CPlayer::spThis = 0;
 #define RUNSPEED 1.5		//ダッシュスピード
 #define DODGESPEED 2		//回避スピード
 #define STAMINA 100			//スタミナ上限
-#define ATTACKCOUNT 120		//攻撃モーション中
+#define ATTACKCOUNT 60		//攻撃モーション中
 #define ATTACK_STAMINA 40	//攻撃消費スタミナ
 #define DEFENSE_STAMINA 40	//防御消費スタミナ
 #define DODGE_STAMINA 80	//回避消費スタミナ
@@ -92,8 +92,11 @@ void CPlayer::Update() {
 			}
 		}
 		else {
-			if (mVelocityX>0){
+			if (mVelocityX>0.0f){
 				mVelocityX -= ACCELERATION;
+				if (mVelocityX<0.0f){
+					mVelocityX = 0.0f;
+				}
 			}
 		}
 		//Dキー入力で右移動
@@ -103,8 +106,11 @@ void CPlayer::Update() {
 			}
 		}
 		else {
-			if (mVelocityX < 0){
+			if (mVelocityX < 0.0f){
 				mVelocityX += ACCELERATION;
+				if (mVelocityX>0.0f){
+					mVelocityX = 0.0f;
+				}
 			}
 		}
 		//Wキー入力で前移動
@@ -114,8 +120,11 @@ void CPlayer::Update() {
 			}
 		}
 		else {
-			if (mVelocityZ>0){
+			if (mVelocityZ>0.0f){
 				mVelocityZ -= ACCELERATION;
+				if (mVelocityZ<0.0f){
+					mVelocityZ = 0.0f;
+				}
 			}
 		}
 		//Sキー入力で後ろ移動
@@ -125,8 +134,11 @@ void CPlayer::Update() {
 			}
 		}
 		else {
-			if (mVelocityZ<0){
+			if (mVelocityZ<0.0f){
 				mVelocityZ += ACCELERATION;
+				if (mVelocityZ>0.0f){
+					mVelocityZ = 0.0f;
+				}
 			}
 		}
 		mXMoveRange = mVelocityX;
