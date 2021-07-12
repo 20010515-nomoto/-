@@ -19,6 +19,7 @@ public:
 	CModel mBackGround;
 	CModel mModel;
 	CPlayer mPlayer;
+
 };
 
 #endif

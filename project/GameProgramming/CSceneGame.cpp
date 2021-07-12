@@ -8,6 +8,7 @@
 #include "CCollisionManager.h"
 #include "CInput.h"
 #include "CEnemy2.h"
+#include "CSword.h"
 CVector mEye;
 CModel mModelC5;
 
@@ -27,13 +28,16 @@ void CSceneGame::Init() {
 	mBackGround.Load("sky.obj", "sky.mtl");
 	mPlayer.mpModel = &mModel;
 	mPlayer.mScale = CVector(1.0f, 1.0f, 1.0f);
-	mPlayer.mPosition = CVector(0.0f, 2.0f, -3.0f);
+	mPlayer.mPosition = CVector(0.0f, 6.0f, -3.0f);
 	mPlayer.mRotation = CVector(0.0f, 180.0f, 0.0f);
 
 	//敵C5モデルの読み込み
 	mModelC5.Load("c5.obj", "c5.mtl");
 	new CEnemy2(CVector(-5.0f, 1.0f, -30.0f),
 		CVector(), CVector(0.1f, 0.1f, 0.1f));
+
+	new CSword(CVector(0.0f, 2.0f, 0.0f),
+		CVector(), CVector(0.2f, 2.0f, 0.2f));
 
 	//背景モデルから三角コライダを生成
 	//親インスタンスと親行列は無し
