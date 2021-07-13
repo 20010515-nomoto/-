@@ -2,6 +2,7 @@
 #define CSWORD_H
 
 #include "CCharacter.h"
+#include "CColliderMesh.h"
 
 class CSword :public CCharacter{
 public:
@@ -10,6 +11,7 @@ public:
 	void Update();
 
 	static CModel mSwordModel;
+	CColliderMesh mColliderMesh;
 };
 
 #endif

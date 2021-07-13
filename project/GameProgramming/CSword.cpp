@@ -29,5 +29,13 @@ CSword::CSword(const CVector& position, const CVector& rotation, const CVector& 
 }
 
 void CSword::Update(){
-	mPosition = mPosition + CVector()*CPlayer::spThis->mMatrix;
+	mPosition = CPlayer::spThis->mPosition;
+	mRotation.mY = CPlayer::spThis->mRotation.mY;
+	if (CPlayer::spThis->mAttack_Decision == true){
+		mRotation.mX += 3;
+	}
+	else{
+		mRotation.mX = 0;
+	}
+	CTransform::Update();
 }
