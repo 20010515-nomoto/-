@@ -143,6 +143,10 @@ void CPlayer::Update() {
 		}
 		mXMoveRange = mVelocityX;
 		mZMoveRange = mVelocityZ;
+		if (CKey::Push('A') && CKey::Push('W') || CKey::Push('A') && CKey::Push('S')
+			|| CKey::Push('D') && CKey::Push('W') || CKey::Push('D') && CKey::Push('S')){
+			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * MOVEADJUST * mMatrix;
+		}
 		//shiftキーを押しながら移動でダッシュ
 		if (CKey::Push(VK_SHIFT)){
 			mRun_Decision = true;
@@ -167,7 +171,7 @@ void CPlayer::Update() {
 
 	////攻撃処理(モデルが未定なため、攻撃中は色を変えてます※デバッグのみ)////
 	if (CKey::Once(VK_LBUTTON) && mStamina >= ATTACK_STAMINA
-		&&mAttack_Decision == false){
+		&&mAttack_Decision == false&&mDefense_Decision==false){
 		mAttackCount = ATTACKCOUNT;
 		mStamina -= ATTACK_STAMINA;
 		mAttack_Decision = true;
@@ -184,7 +188,7 @@ void CPlayer::Update() {
 	////攻撃処理終了////
 
 	////防御処理(モデルが未定なため、防御中は色を変えてます※デバッグのみ)////
-	if (CKey::Push(VK_RBUTTON)){
+	if (CKey::Push(VK_RBUTTON)&&mAttack_Decision==false){
 		mDefense_Decision = true;
 	}
 	else{
