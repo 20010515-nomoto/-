@@ -18,6 +18,9 @@
 #include "CEnemy2.h"
 
 CPlayer *CPlayer::spThis = 0;
+CModel CPlayer::sModel;
+
+#define PLAYER_MODEL "cube.obj","cube.mtl"
 
 #define GRAVITY -0.5		//重力
 #define ACCELERATION 0.005	//加速値
@@ -40,7 +43,7 @@ CPlayer::CPlayer()
 , mLine2(this, &mMatrix, CVector(0.0f, 2.0f, 0.0f), CVector(0.0f, 0.0f, 0.0f))
 , mLine3(this, &mMatrix, CVector(5.0f, 0.0f, 0.0f), CVector(-5.0f, 0.0f, 0.0f))
 , mCollider(this, &mMatrix, CVector(0.0f, 0.0f, 0.0f), 0.5f)
-, mAttackCollider(this,&mMatrix,CVector(0.0f,0.0f,0.0f),3.0f)
+//, mAttackCollider(this,&mMatrix,CVector(0.0f,0.0f,0.0f),3.0f)
 , mVelocityX(0.0)
 , mVelocityZ(0.0)
 , mXMoveRange(0.0)
@@ -55,7 +58,16 @@ CPlayer::CPlayer()
 , mAttack_Decision(false)
 , mInvincible_Time(0)
 , mPlayerHp(PLAYERHP)
+, mSword(this)
 {
+	if (sModel.mTriangles.size() == 0){
+		sModel.Load(PLAYER_MODEL);
+	}
+	mpModel = &sModel;
+	mScale = CVector(1.0f, 1.0f, 1.0f);
+	mPosition = CVector(0.0f, 1.0f, -3.0f);
+	mRotation = CVector(0.0f, 180.0f, 0.0f);
+	CTransform::Update();
 	mTag = EPLAYER;	//タグの設定
 	spThis = this;
 	//テクスチャファイルの読み込み（1行64列）
@@ -63,7 +75,7 @@ CPlayer::CPlayer()
 	//起動時のマウスカーソルの座標を覚える
 	CInput::GetMousePos(&mMouseX, &mMouseY);
 	mStamina = STAMINA;
-	mAttackCollider.mTag = CCollider::EPLAYER_ATTACK;
+	//mAttackCollider.mTag = CCollider::EPLAYER_ATTACK;
 }
 
 //更新処理
@@ -288,13 +300,13 @@ void CPlayer::TaskCollision()
 	mLine2.ChangePriority();
 	mLine3.ChangePriority();
 	mCollider.ChangePriority();
-	mAttackCollider.ChangePriority();
+	//mAttackCollider.ChangePriority();
 	//衝突処理を実行
 	CCollisionManager::Get()->Collision(&mLine, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine2, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mLine3, COLLISIONRANGE);
 	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
-	CCollisionManager::Get()->Collision(&mAttackCollider, COLLISIONRANGE);
+	//CCollisionManager::Get()->Collision(&mAttackCollider, COLLISIONRANGE);
 }
 
 void CPlayer::Render()

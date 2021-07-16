@@ -1,36 +1,30 @@
 #include "CSword.h"
 #include "CTaskManager.h"
 #include "CPlayer.h"
+#include "CCollisionManager.h"
 
-#define OBJ "cube.obj"
-#define MTL "cube.mtl"
+#define SWORD_MODEL "sword.obj","sword.mtl"
 
 CModel CSword::mSwordModel;	//モデルデータの作成
 
-CSword::CSword(){
+CSword::CSword(CCharacter *parent)
+:mCollider(this, &mMatrix, CVector(0.0f,15.0f,0.0f),0.5f)
+{
+	//親のインスタンスの退避
+	mpParent = parent;
 	if (mSwordModel.mTriangles.size() == 0){
-		mSwordModel.Load(OBJ, MTL);
+		mSwordModel.Load(SWORD_MODEL);
 	}
 	mpModel = &mSwordModel;
-}
-
-CSword::CSword(const CVector& position, const CVector& rotation, const CVector& scale)
-:CSword()
-{
-	//位置、回転、拡縮を設定する
-	mPosition = position;	//位置の設定
-	mRotation = rotation;	//回転の設定
-	mScale = scale;	//拡縮の設定
+	mScale = CVector(0.3f, 0.3f, 0.3f);
+	mPosition = CVector(0.0f, 1.0f, 0.0f);
 	CTransform::Update();	//行列の更新
-	//優先度を1に変更する
-	mPriority = 1;
 	CTaskManager::Get()->Remove(this); //削除して
 	CTaskManager::Get()->Add(this); //追加する
+	mCollider.mTag = CCollider::EPLAYER_ATTACK;
 }
 
 void CSword::Update(){
-	mPosition = CPlayer::spThis->mPosition;
-	mRotation.mY = CPlayer::spThis->mRotation.mY;
 	if (CPlayer::spThis->mAttack_Decision == true){
 		mRotation.mX += 3;
 	}
@@ -38,4 +32,10 @@ void CSword::Update(){
 		mRotation.mX = 0;
 	}
 	CTransform::Update();
+	mMatrix = mMatrix * mpParent->mMatrix;
+}
+
+void CSword::TaskCollision(){
+	mCollider.ChangePriority();
+	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
 }

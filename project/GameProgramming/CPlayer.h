@@ -9,6 +9,7 @@
 //
 #include "CText.h"
 #include <Windows.h>
+#include "CSword.h"
 class CEnemy2;
 /*
 プレイヤークラス
@@ -20,10 +21,14 @@ public:
 	//CCollider mAttackCollider;
 	CText mText;
 	static CPlayer *spThis;
+	static CModel sModel;
 	CColliderLine mLine; //線分コライダ
 	CColliderLine mLine2;
 	CColliderLine mLine3;
-	CCollider mAttackCollider;	//攻撃判定
+	//CCollider mAttackCollider;	//攻撃判定
+
+	//子のインスタンス
+	CSword mSword;
 
 	//デフォルトコンストラクタ
 	CPlayer();

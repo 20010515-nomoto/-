@@ -24,20 +24,12 @@ void CSceneGame::Init() {
 
 	mEye = CVector(1.0f, 2.0f, 3.0f);
 	//モデルファイルの入力
-	mModel.Load("cube.obj", "cube.mtl");
 	mBackGround.Load("sky.obj", "sky.mtl");
-	mPlayer.mpModel = &mModel;
-	mPlayer.mScale = CVector(1.0f, 1.0f, 1.0f);
-	mPlayer.mPosition = CVector(0.0f, 1.0f, -3.0f);
-	mPlayer.mRotation = CVector(0.0f, 180.0f, 0.0f);
 
 	//敵C5モデルの読み込み
 	mModelC5.Load("c5.obj", "c5.mtl");
 	new CEnemy2(CVector(-5.0f, 1.0f, -30.0f),
 		CVector(), CVector(0.1f, 0.1f, 0.1f));
-
-	new CSword(CVector(0.0f, 2.0f, 0.0f),
-		CVector(), CVector(0.2f, 2.0f, 0.2f));
 
 	//背景モデルから三角コライダを生成
 	//親インスタンスと親行列は無し

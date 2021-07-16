@@ -2,16 +2,21 @@
 #define CSWORD_H
 
 #include "CCharacter.h"
-#include "CColliderMesh.h"
+#include "CCollider.h"
+class CPlayer;
 
 class CSword :public CCharacter{
+private:
+	//親へのポインタ
+	CCharacter *mpParent;
+	static CModel mSwordModel;
+	CCollider mCollider;
+	void TaskCollision();
+
 public:
-	CSword();
-	CSword(const CVector& position, const CVector& rotation, const CVector& scale);
+	CSword(CCharacter *parent);
 	void Update();
 
-	static CModel mSwordModel;
-	CColliderMesh mColliderMesh;
 };
 
 #endif
