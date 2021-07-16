@@ -108,6 +108,9 @@
     <ClCompile Include="CSword.cpp">
       <Filter>ソース ファイル\Lib</Filter>
     </ClCompile>
+    <ClCompile Include="CRandom.cpp">
+      <Filter>ソース ファイル\Lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSceneGame.h">
@@ -204,6 +207,9 @@
       <Filter>ソース ファイル\Lib</Filter>
     </ClInclude>
     <ClInclude Include="CSword.h">
+      <Filter>ソース ファイル\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="CRandom.h">
       <Filter>ソース ファイル\Lib</Filter>
     </ClInclude>
   </ItemGroup>

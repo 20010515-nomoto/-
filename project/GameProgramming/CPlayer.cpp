@@ -36,6 +36,8 @@ CModel CPlayer::sModel;
 #define DODGE_STAMINA 80	//回避消費スタミナ
 #define INVINCIBLE_TIME 60	//無敵時間
 #define PLAYERHP 100		//プレイヤーHP
+#define KNOCK_BACK_MAX 7.0		//ノックバック距離
+#define KNOCK_BACK_RANGE 0.5	//ノックバック
 
 
 CPlayer::CPlayer()
@@ -59,6 +61,7 @@ CPlayer::CPlayer()
 , mInvincible_Time(0)
 , mPlayerHp(PLAYERHP)
 , mSword(this)
+, mKnock_Back(0)
 {
 	if (sModel.mTriangles.size() == 0){
 		sModel.Load(PLAYER_MODEL);
@@ -96,7 +99,7 @@ void CPlayer::Update() {
 		mRotation.mY += (mMouseX - px) / 15.0;
 	}
 	////これより下、移動処理////
-	if (mAttack_Decision == false && mDefense_Decision == false){
+	if (mAttack_Decision == false){
 		//Aキー入力で左移動
 		if (CKey::Push('A')) {
 			if (mVelocityX < VELOCITYMAX){
@@ -155,6 +158,13 @@ void CPlayer::Update() {
 		}
 		mXMoveRange = mVelocityX;
 		mZMoveRange = mVelocityZ;
+		if (mKnock_Back>0){
+			mZMoveRange -= KNOCK_BACK_RANGE;
+			mKnock_Back -= KNOCK_BACK_RANGE;
+		}
+		else{
+			mKnock_Back = 0;
+		}
 		if (CKey::Push('A') && CKey::Push('W') || CKey::Push('A') && CKey::Push('S')
 			|| CKey::Push('D') && CKey::Push('W') || CKey::Push('D') && CKey::Push('S')){
 			mPosition = CVector(mXMoveRange, 0.0f, mZMoveRange) * MOVEADJUST * mMatrix;
@@ -181,7 +191,7 @@ void CPlayer::Update() {
 	}
 	////移動処理終わり////
 
-	////攻撃処理(モデルが未定なため、攻撃中は色を変えてます※デバッグのみ)////
+	////攻撃処理////
 	if (CKey::Once(VK_LBUTTON) && mStamina >= ATTACK_STAMINA
 		&&mAttack_Decision == false&&mDefense_Decision==false){
 		mAttackCount = ATTACKCOUNT;
@@ -190,9 +200,6 @@ void CPlayer::Update() {
 	}
 	if (mAttackCount > 0){
 		mAttackCount--;
-		mpModel->mpMaterials[0]->mDiffuse[0] = 1.0f;
-		mpModel->mpMaterials[0]->mDiffuse[1] = 0.0f;
-		mpModel->mpMaterials[0]->mDiffuse[2] = 0.0f;
 	}
 	else{
 		mAttack_Decision = false;
@@ -276,11 +283,13 @@ void CPlayer::Collision(CCollider *m, CCollider *o) {
 									mInvincible_Time = INVINCIBLE_TIME;
 									if (mDefense_Decision == true && mStamina >= DEFENSE_STAMINA){
 										mStamina -= DEFENSE_STAMINA;
+										mKnock_Back = KNOCK_BACK_MAX;
 									}
 									else{
 										//エフェクト生成
 										new CEffect(o->mpParent->mPosition, 3.0f, 3.0f, "exp.tga", 4, 4, 2);
 										mPlayerHp -= 20;
+										mKnock_Back = KNOCK_BACK_MAX;
 									}
 								}
 							}

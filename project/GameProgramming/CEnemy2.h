@@ -4,6 +4,7 @@
 #include "CCharacter.h"
 //コライダクラスのインクルード
 #include "CCollider.h"
+#include "CRandom.h"
 /*
 エネミークラス
 キャラクタクラスを継承
@@ -42,6 +43,7 @@ public:
 
 	bool mAcquisitionFlg;	//捕捉フラグ:敵がプレイヤーを捕捉しているかどうか true:している
 	bool mAttackFlg;	//攻撃フラグ:true 攻撃する
+
 };
 
 #endif

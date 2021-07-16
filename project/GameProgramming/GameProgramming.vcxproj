@@ -100,6 +100,7 @@
     <ClCompile Include="CMatrix.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CPlayer.cpp" />
+    <ClCompile Include="CRandom.cpp" />
     <ClCompile Include="CSceneGame.cpp" />
     <ClCompile Include="CSceneManager.cpp" />
     <ClCompile Include="CSound.cpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="CMatrix.h" />
     <ClInclude Include="CModel.h" />
     <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CRandom.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CSceneGame.h" />
     <ClInclude Include="CSceneManager.h" />

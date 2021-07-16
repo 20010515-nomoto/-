@@ -61,6 +61,7 @@ public:
 	int mInvincible_Time;	//無敵時間
 
 	int mPlayerHp;	//HP
+	float mKnock_Back;		//ノックバック距離
 };
 
 #endif
