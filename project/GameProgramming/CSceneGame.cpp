@@ -9,6 +9,7 @@
 #include "CInput.h"
 #include "CEnemy2.h"
 #include "CSword.h"
+#include "CShield.h"
 CVector mEye;
 CModel mModelC5;
 

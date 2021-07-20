@@ -103,6 +103,7 @@
     <ClCompile Include="CRandom.cpp" />
     <ClCompile Include="CSceneGame.cpp" />
     <ClCompile Include="CSceneManager.cpp" />
+    <ClCompile Include="CShield.cpp" />
     <ClCompile Include="CSound.cpp" />
     <ClCompile Include="CSword.cpp" />
     <ClCompile Include="CTaskManager.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CSceneGame.h" />
     <ClInclude Include="CSceneManager.h" />
+    <ClInclude Include="CShield.h" />
     <ClInclude Include="CSound.h" />
     <ClInclude Include="CSword.h" />
     <ClInclude Include="CTask.h" />
