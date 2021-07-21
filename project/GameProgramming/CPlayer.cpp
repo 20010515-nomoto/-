@@ -61,6 +61,7 @@ CPlayer::CPlayer()
 , mInvincible_Time(0)
 , mPlayerHp(PLAYERHP)
 , mSword(this)
+, mShield(this)
 , mKnock_Back(0)
 {
 	if (sModel.mTriangles.size() == 0){

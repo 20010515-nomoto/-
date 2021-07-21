@@ -3,7 +3,7 @@
 #include "CCollisionManager.h"
 #include "CPlayer.h"
 
-#define SHIELDMODEL "cube.obj","cube.mtl"
+#define SHIELDMODEL "plane.obj","plane.mtl"
 
 CModel CShield::mShieldModel;
 
@@ -15,24 +15,23 @@ CShield::CShield(CCharacter *parent)
 		mShieldModel.Load(SHIELDMODEL);
 	}
 	mpModel = &mShieldModel;
-	mScale = CVector(0.5f, 0.5f, 0.5f);
-	mPosition = CVector(3.0f, 0.0f, 0.0f);
+	mScale = CVector(1.5f, 1.5f, 1.5f);
+	mPosition = CVector(2.0f, 0.0f, 0.0f);
+	mRotation = CVector(0.0f, 0.0f, 90.0f);
 	CTransform::Update();
 	CTaskManager::Get()->Remove(this);
 	CTaskManager::Get()->Add(this);
 	mCollider.mTag = CCollider::ESEARCH;
 }
 void CShield::Update(){
+	CVector vp = mPosition - mpParent->mPosition;
 	if (CPlayer::spThis->mDefense_Decision == true){
-		if (mRotation.mY <= 20.0f){
-			mRotation.mY += 2.0f;
-		}
+		mPosition = vp*mMatrixRotate.RotateY(-5)*mpParent->mMatrix;
 	}
 	else{
-		mRotation.mY = 0;
+		mMatrixRotate.RotateY(0);
 	}
 	CTransform::Update();
-	mMatrix = mMatrix * mpParent->mMatrix;
 }
 void CShield::TaskCollision(){
 	mCollider.ChangePriority();

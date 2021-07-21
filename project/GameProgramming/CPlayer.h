@@ -10,6 +10,7 @@
 #include "CText.h"
 #include <Windows.h>
 #include "CSword.h"
+#include "CShield.h"
 class CEnemy2;
 /*
 プレイヤークラス
@@ -29,6 +30,7 @@ public:
 
 	//子のインスタンス
 	CSword mSword;
+	CShield mShield;
 
 	//デフォルトコンストラクタ
 	CPlayer();
