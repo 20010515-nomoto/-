@@ -30,7 +30,7 @@ CModel CPlayer::sModel;
 #define RUNSPEED 1.5		//ダッシュスピード
 #define DODGESPEED 2		//回避スピード
 #define STAMINA 100			//スタミナ上限
-#define ATTACKCOUNT 60		//攻撃モーション中
+#define ATTACKCOUNT 20		//攻撃モーション中
 #define ATTACK_STAMINA 40	//攻撃消費スタミナ
 #define DEFENSE_STAMINA 40	//防御消費スタミナ
 #define DODGE_STAMINA 80	//回避消費スタミナ

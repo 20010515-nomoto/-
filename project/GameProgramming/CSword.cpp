@@ -26,7 +26,7 @@ CSword::CSword(CCharacter *parent)
 
 void CSword::Update(){
 	if (CPlayer::spThis->mAttack_Decision == true){
-		mRotation.mX += 3;
+		mRotation.mX += 10;
 	}
 	else{
 		mRotation.mX = 0;
