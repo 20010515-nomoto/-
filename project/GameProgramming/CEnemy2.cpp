@@ -3,11 +3,12 @@
 #include "CTaskManager.h"
 #include "CCollisionManager.h"
 #include "CPlayer.h"
+#include "CEnemyHp.h"
 
 #define OBJ "f16.obj"	//モデルのファイル
 #define MTL "f16.mtl"	//モデルのマテリアルファイル
 
-#define HP 3	//耐久値
+#define HP 10	//耐久値
 #define VELOCITY 0.11f	//速度
 
 CModel CEnemy2::mModel;	//モデルデータ作成
@@ -60,6 +61,7 @@ CEnemy2::CEnemy2(const CVector& position, const CVector& rotation, const CVector
 	//目標地点の設定
 	//mPoint = mPosition + CVector(0.0f, 0.0f, 100.0f) * mMatrixRotate;
 	mPoint = CPlayer::spThis->mPosition;
+	new CEnemyHp(CVector(0.0f,10.0f,0.0f), 5.0f, 1.0f, "brick.tga");
 }
 
 //更新処理

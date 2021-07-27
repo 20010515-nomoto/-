@@ -5,6 +5,7 @@
 //コライダクラスのインクルード
 #include "CCollider.h"
 #include "CRandom.h"
+class CEnemyHp;
 /*
 エネミークラス
 キャラクタクラスを継承
