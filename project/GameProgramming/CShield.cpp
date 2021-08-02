@@ -1,7 +1,7 @@
 #include "CShield.h"
 #include "CTaskManager.h"
 #include "CCollisionManager.h"
-#include "CPlayer.h"
+#include "CXPlayer.h"
 
 #define SHIELDMODEL "plane.obj","plane.mtl"
 
@@ -24,14 +24,20 @@ CShield::CShield(CCharacter *parent)
 	mCollider.mTag = CCollider::ESEARCH;
 }
 void CShield::Update(){
-	CVector vp = mPosition - mpParent->mPosition;
-	if (CPlayer::spThis->mDefense_Decision == true){
-		mPosition = vp*mMatrixRotate.RotateY(-5)*mpParent->mMatrix;
+	if (CXPlayer::spThis->mDefense_Decision == true){
+		mRotation.mY -= 5;
+		if (mRotation.mY <= -45){
+			mRotation.mY = -45;
+		}
 	}
 	else{
-		mMatrixRotate.RotateY(0);
+		mRotation.mY += 5;
+		if (mRotation.mY >= 0){
+			mRotation.mY = 0;
+		}
 	}
-	CTransform::Update();
+	mMatrixRotate.RotateZ(90);
+	mMatrix = mMatrix*mpParent->mMatrix;
 }
 void CShield::TaskCollision(){
 	mCollider.ChangePriority();

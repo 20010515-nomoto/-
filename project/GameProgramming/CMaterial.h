@@ -1,6 +1,7 @@
 #ifndef CMATERIAL_H
 #define CMATERIAL_H
 #include "CTexture.h"
+class CModelX;
 /*
 マテリアルクラス
 マテリアルのデータを扱う
@@ -23,6 +24,21 @@ public:
 	void LoadTexture(char *file);
 	//マテリアルを無効にする
 	void Disabled();
+
+	float mPower;
+	float mSpecular[3];
+	float mEmissive[3];
+	//テクスチャファイル名
+	char *mpTextureFilename;
+
+	CMaterial(CModelX *model);
+
+	~CMaterial(){
+		if (mpTextureFilename){
+			delete[] mpTextureFilename;
+		}
+		mpTextureFilename = 0;
+	}
 };
 
 #endif

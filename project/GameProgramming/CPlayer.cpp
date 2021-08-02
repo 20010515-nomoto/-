@@ -322,7 +322,7 @@ void CPlayer::TaskCollision()
 void CPlayer::Render()
 {
 	//e‚Ì•`‰æˆ—
-	CCharacter::Render();
+	//CCharacter::Render();
 
 	//2D‚Ì•`‰æŠJn
 	CUtil::Start2D(-400, 400, -300, 300);

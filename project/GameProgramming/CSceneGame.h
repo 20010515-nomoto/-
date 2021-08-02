@@ -17,8 +17,6 @@ public:
 	void Update();
 
 	CModel mBackGround;
-	CModel mModel;
-	CPlayer mPlayer;
 
 };
 

@@ -133,3 +133,103 @@ CMatrix CMatrix::operator*(const CMatrix &m) {
 
 	return t;
 }
+
+//クオータニオンで回転行列を設定する
+CMatrix CMatrix::SetQuaternion(float x, float y, float z, float w){
+	mM[0][0] = x*x - y*y - z*z + w*w;
+	mM[0][1] = 2 * x*y - 2 * w*z;
+	mM[0][2] = 2 * x*z + 2 * w*y;
+	mM[0][3] = 0;
+	mM[1][0] = 2 * x*y + 2 * w*z;
+	mM[1][1] = -x*x + y*y - z*z + w*w;
+	mM[1][2] = 2 * y*z - 2 * w*x;
+	mM[1][3] = 0;
+	mM[2][0] = 2 * x*z - 2 * w*y;
+	mM[2][1] = 2 * y*z + 2 * w*x;
+	mM[2][2] = -x*x - y*y + z*z + w*w;
+	mM[2][3] = 0;
+	mM[3][0] = 0;
+	mM[3][1] = 0;
+	mM[3][2] = 0;
+	mM[3][3] = 1;
+	return *this;
+}
+//*演算子のオーバーロード
+//CMatrix * floatの演算結果を返す
+CMatrix CMatrix::operator*(const float &f){
+	CMatrix t;
+
+	t.mM[0][0] = mM[0][0] * f;
+	t.mM[0][1] = mM[0][1] * f;
+	t.mM[0][2] = mM[0][2] * f;
+	t.mM[0][3] = mM[0][3] * f;
+
+	t.mM[1][0] = mM[1][0] * f;
+	t.mM[1][1] = mM[1][1] * f;
+	t.mM[1][2] = mM[1][2] * f;
+	t.mM[1][3] = mM[1][3] * f;
+
+	t.mM[2][0] = mM[2][0] * f;
+	t.mM[2][1] = mM[2][1] * f;
+	t.mM[2][2] = mM[2][2] * f;
+	t.mM[2][3] = mM[2][3] * f;
+
+	t.mM[3][0] = mM[3][0] * f;
+	t.mM[3][1] = mM[3][1] * f;
+	t.mM[3][2] = mM[3][2] * f;
+	t.mM[3][3] = mM[3][3] * f;
+
+	return t;
+}
+
+//+演算子のオーバーロード
+//CMatrix1 + CMatrix2の演算結果を返す
+CMatrix CMatrix::operator+(const CMatrix &m){
+	CMatrix t;
+
+	t.mM[0][0] = mM[0][0] + m.mM[0][0];
+	t.mM[0][1] = mM[0][1] + m.mM[0][1];
+	t.mM[0][2] = mM[0][2] + m.mM[0][2];
+	t.mM[0][3] = mM[0][3] + m.mM[0][3];
+
+	t.mM[1][0] = mM[1][0] + m.mM[1][0];
+	t.mM[1][1] = mM[1][1] + m.mM[1][1];
+	t.mM[1][2] = mM[1][2] + m.mM[1][2];
+	t.mM[1][3] = mM[1][3] + m.mM[1][3];
+
+	t.mM[2][0] = mM[2][0] + m.mM[2][0];
+	t.mM[2][1] = mM[2][1] + m.mM[2][1];
+	t.mM[2][2] = mM[2][2] + m.mM[2][2];
+	t.mM[2][3] = mM[2][3] + m.mM[2][3];
+
+	t.mM[3][0] = mM[3][0] + m.mM[3][0];
+	t.mM[3][1] = mM[3][1] + m.mM[3][1];
+	t.mM[3][2] = mM[3][2] + m.mM[3][2];
+	t.mM[3][3] = mM[3][3] + m.mM[3][3];
+
+	return t;
+}
+
+//+=演算子のオーバーロード
+//CMatrix1 += CMatrix2の演算を行う
+void CMatrix::operator+=(const CMatrix &m){
+	mM[0][0] += m.mM[0][0];
+	mM[0][1] += m.mM[0][1];
+	mM[0][2] += m.mM[0][2];
+	mM[0][3] += m.mM[0][3];
+
+	mM[1][0] += m.mM[1][0];
+	mM[1][1] += m.mM[1][1];
+	mM[1][2] += m.mM[1][2];
+	mM[1][3] += m.mM[1][3];
+
+	mM[2][0] += m.mM[2][0];
+	mM[2][1] += m.mM[2][1];
+	mM[2][2] += m.mM[2][2];
+	mM[2][3] += m.mM[2][3];
+
+	mM[3][0] += m.mM[3][0];
+	mM[3][1] += m.mM[3][1];
+	mM[3][2] += m.mM[3][2];
+	mM[3][3] += m.mM[3][3];
+}

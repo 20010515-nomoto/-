@@ -3,9 +3,12 @@
 #include <string.h>
 #include "glut.h"
 
+#include "CModelX.h"
+
 //デフォルトコンストラクタ
 CMaterial::CMaterial()
 :mVertexNum(0)
+, mpTextureFilename(nullptr)
 {
 	//名前を0で埋め
 	memset(mName, 0, sizeof(mName));
@@ -48,5 +51,51 @@ void CMaterial::Disabled()
 		glBindTexture(GL_TEXTURE_2D, 0);
 		//テクスチャを無効にする
 		glDisable(GL_TEXTURE_2D);
+	}
+}
+
+/*
+Materialデータの読み込みと設定
+*/
+CMaterial::CMaterial(CModelX *model)
+:mpTextureFilename(nullptr)
+{
+	//CModelXにマテリアルを追加する
+	model->mMaterial.push_back(this);
+	model->GetToken();	//{ ? Name
+	if (strcmp(model->mToken, "{") != 0){
+		//{でないときはマテリアル名
+		strcpy(mName, model->mToken);
+		model->GetToken();	//{
+	}
+	mDiffuse[0] = model->GetFloatToken();
+	mDiffuse[1] = model->GetFloatToken();
+	mDiffuse[2] = model->GetFloatToken();
+	mDiffuse[3] = model->GetFloatToken();
+
+	mPower = model->GetFloatToken();
+
+	mSpecular[0] = model->GetFloatToken();
+	mSpecular[1] = model->GetFloatToken();
+	mSpecular[2] = model->GetFloatToken();
+
+	mEmissive[0] = model->GetFloatToken();
+	mEmissive[1] = model->GetFloatToken();
+	mEmissive[2] = model->GetFloatToken();
+
+	model->GetToken();	//TextureFilename or }
+
+	if (strcmp(model->mToken, "TextureFilename") == 0){
+		//テクスチャありの場合、テクスチャファイル名取得
+		model->GetToken();	//{
+		model->GetToken();	//filename
+		mpTextureFilename = new char[strlen(model->mToken) + 1];
+		strcpy(mpTextureFilename, model->mToken);
+
+		//テクスチャファイルの読み込み
+		mTexture.Load(mpTextureFilename);
+
+		model->GetToken();	// }
+		model->GetToken();	// }
 	}
 }

@@ -17,6 +17,7 @@ public:
 		EENEMY_ATTACK_RANGE,	//敵攻撃範囲
 		EENEMY_ATTACK,			//敵攻撃判定
 		EPLAYER_ATTACK,		//プレイヤー攻撃用
+		ESWORD,		//剣
 	};
 	ETag mTag;
 	//コライダタイプ
