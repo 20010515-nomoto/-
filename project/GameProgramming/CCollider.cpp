@@ -3,7 +3,7 @@
 #include "CColliderLine.h"
 
 CCollider::CCollider()
-: mpParent(0)
+: mpParent(nullptr)
 , mpMatrix(&mMatrix)
 , mType(ESPHERE)
 , mTag(EBODY)

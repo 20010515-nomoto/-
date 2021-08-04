@@ -12,7 +12,7 @@ class CAnimationSet;
 class CAnimation;
 class CAnimationKey;
 
-#define MODEL_FILE "ラグナ.x"	//入力ファイル名
+#define MODEL_FILE "resource\\ラグナ.x"	//入力ファイル名
 
 //配列のサイズ取得をマクロ化
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))

@@ -1,4 +1,5 @@
 #include "CXCharacter.h"
+#include "CTaskManager.h"
 
 /*
 デフォルトコンストラクタ

@@ -3,7 +3,8 @@
 #include "CCollisionManager.h"
 #include "CXPlayer.h"
 
-#define SHIELDMODEL "plane.obj","plane.mtl"
+#define SHIELDMODEL "resource\\plane.obj","resource\\plane.mtl"
+#define SHIELDROTATION 5
 
 CModel CShield::mShieldModel;
 
@@ -16,30 +17,42 @@ CShield::CShield(CCharacter *parent)
 	}
 	mpModel = &mShieldModel;
 	mScale = CVector(1.5f, 1.5f, 1.5f);
-	mPosition = CVector(2.0f, 0.0f, 0.0f);
-	mRotation = CVector(0.0f, 0.0f, 90.0f);
 	CTransform::Update();
 	CTaskManager::Get()->Remove(this);
 	CTaskManager::Get()->Add(this);
-	mCollider.mTag = CCollider::ESEARCH;
+	mCollider.mTag = CCollider::ESHIELD;
 }
 void CShield::Update(){
 	if (CXPlayer::spThis->mDefense_Decision == true){
-		mRotation.mY -= 5;
-		if (mRotation.mY <= -45){
-			mRotation.mY = -45;
+		mRotation.mY -= SHIELDROTATION;
+		if (mRotation.mY <= -90){
+			mRotation.mY = -90;
 		}
 	}
 	else{
-		mRotation.mY += 5;
+		mRotation.mY += SHIELDROTATION;
 		if (mRotation.mY >= 0){
 			mRotation.mY = 0;
 		}
 	}
-	mMatrixRotate.RotateZ(90);
+	mMatrix = CMatrix().RotateZ(-90.0f)*CMatrix().Translate(2.0f, 2.0f, 0.0f)*CMatrix().RotateY(mRotation.mY);
 	mMatrix = mMatrix*mpParent->mMatrix;
 }
 void CShield::TaskCollision(){
 	mCollider.ChangePriority();
 	CCollisionManager::Get()->Collision(&mCollider, COLLISIONRANGE);
+}
+
+void CShield::Collision(CCollider *m, CCollider *o){
+	if (m->mTag == CCollider::ESHIELD){
+		if (o->mType == CCollider::EENEMY_ATTACK){
+			if (CXPlayer::spThis->mDefense_Decision == true){
+				if (mRotation.mY == -90.0f){
+					if (CCollider::Collision(m, o)){
+						CXPlayer::spThis->mDefense_Success = true;
+					}
+				}
+			}
+		}
+	}
 }

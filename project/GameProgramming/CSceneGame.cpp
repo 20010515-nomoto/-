@@ -31,14 +31,14 @@ CSceneGame::~CSceneGame() {
 
 void CSceneGame::Init() {
 	//テキストフォントの読み込みと設定
-	mFont.LoadTexture("FontG.tga", 1, 4096 / 64);
+	mFont.LoadTexture("resource\\FontG.tga", 1, 4096 / 64);
 
 	mEye = CVector(1.0f, 2.0f, 3.0f);
 	//モデルファイルの入力
-	mBackGround.Load("sky.obj", "sky.mtl");
+	mBackGround.Load("resource\\sky.obj", "resource\\sky.mtl");
 
 	CRes::sModelX.Load(MODEL_FILE);
-	CRes::sKnight.Load("knight\\knight_low.x");
+	CRes::sKnight.Load("resource\\knight\\knight_low.x");
 	CRes::sKnight.SeparateAnimationSet(0, 10, 80, "walk");	//1:移動
 	CRes::sKnight.SeparateAnimationSet(0, 1530, 1830, "idle1");	//2:待機
 	CRes::sKnight.SeparateAnimationSet(0, 10, 80, "walk");	//3:ダミー
@@ -56,13 +56,13 @@ void CSceneGame::Init() {
 	//敵の初期設定
 	mEnemy.Init(&CRes::sKnight);
 	mEnemy.mAnimationFrameSize = 1024;
-	mEnemy.ChangeAnimation(2, true, 200);
 	//背景モデルから三角コライダを生成
 	//親インスタンスと親行列は無し
 	mColliderMesh.Set(NULL, NULL, &mBackGround);
 
 	//敵の位置
-	mEnemy.mPosition = CVector(0.0f, 0.0f, 5.0f);
+	mEnemy.mPosition = CVector(-5.0f, 0.0f, -30.0f);
+	mEnemy.mRotation = CVector(0.0f, 180.0f, 0.0f);
 }
 
 

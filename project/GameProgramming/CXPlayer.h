@@ -4,6 +4,9 @@
 #include "CXCharacter.h"
 #include "CCollider.h"
 #include "CShield.h"
+
+class CXEnemy;
+
 class CXPlayer :public CXCharacter{
 public:
 	//XVˆ—
@@ -33,6 +36,7 @@ public:
 	int mAttackCount;	//UŒ‚‚Ì”»’èŠÔ
 	bool mAttack_Decision;	//UŒ‚’†”»’è true:UŒ‚’†
 	bool mDefense_Decision;	//–hŒä’†”»’f true:–hŒä’†
+	bool mDefense_Success;
 
 	bool mDodge_Decision;	//‰ñ”ğ’†”»’f true:‰ñ”ğ’†
 	int mInvincible_Time;	//–³“GŠÔ
@@ -40,6 +44,9 @@ public:
 	int mPlayerHp;	//HP
 	float mKnock_Back;		//ƒmƒbƒNƒoƒbƒN‹——£
 
+	//Õ“Ëˆ—
+	void Collision(CCollider *m, CCollider *o);
+	void TaskCollision();
 };
 
 

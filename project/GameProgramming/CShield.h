@@ -15,6 +15,8 @@ private:
 public:
 	CShield(CCharacter *parent);
 	void Update();
+
+	void Collision(CCollider *m, CCollider *o);
 };
 
 #endif

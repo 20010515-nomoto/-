@@ -2,6 +2,8 @@
 #include "CKey.h"
 #include "CCollisionManager.h"
 #include "CInput.h"
+#include "CXEnemy.h"
+#include "CRes.h"
 
 CXPlayer *CXPlayer::spThis = 0;
 
@@ -41,11 +43,16 @@ CXPlayer::CXPlayer()
 , mPlayerHp(PLAYERHP)
 , mShield(this)
 , mKnock_Back(0)
+, mDefense_Success(false)
 {
 	//タグ設定
 	mTag = EPLAYER;
 	mColSphereSword.mTag = CCollider::ESWORD;
+	mColSphereBody.mTag = mColSphereHead.mTag = CCollider::EBODY;
 	spThis = this;
+	mpModel = &CRes::sModelX;
+	mPosition = CVector(0.0f, 0.0f, -3.0f);
+	mRotation = CVector(0.0f, 180.0f, 0.0f);
 }
 
 void CXPlayer::Init(CModelX *model){
@@ -227,4 +234,52 @@ void CXPlayer::Update(){
 		}
 	}
 	CXCharacter::Update();
+}
+
+void CXPlayer::Collision(CCollider *m, CCollider *o){
+	//相手がサーチの時は戻る
+	if (o->mTag == CCollider::ESEARCH)
+	{
+		return;
+	}
+	switch (m->mType)
+	{
+	case CCollider::ESPHERE:
+		if (m->mTag == CCollider::EBODY){
+			if (mDodge_Decision == false){
+				//相手のコライダが球コライダの時
+				if (o->mType == CCollider::ESPHERE) {
+					if (o->mTag == CCollider::EENEMY_ATTACK){
+						if (CXEnemy::spThis->mAcquisitionFlg == true){
+							if (mInvincible_Time <= 0){
+								if (CCollider::Collision(m, o))
+								{
+									mInvincible_Time = INVINCIBLE_TIME;
+									if (mStamina >= DEFENSE_STAMINA&&mDefense_Success==true){
+										mStamina -= DEFENSE_STAMINA;
+										mKnock_Back = KNOCK_BACK_MAX;
+									}
+									else{
+										mPlayerHp -= 20;
+										mKnock_Back = KNOCK_BACK_MAX;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		break;
+	}
+}
+
+void CXPlayer::TaskCollision(){
+	mColSphereBody.ChangePriority();
+	mColSphereHead.ChangePriority();
+	mColSphereSword.ChangePriority();
+
+	CCollisionManager::Get()->Collision(&mColSphereBody, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mColSphereHead, COLLISIONRANGE);
+	CCollisionManager::Get()->Collision(&mColSphereSword, COLLISIONRANGE);
 }

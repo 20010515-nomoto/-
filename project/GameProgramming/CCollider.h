@@ -4,6 +4,7 @@
 #include "CCharacter.h"
 //トランスフォームクラスのインクルード
 #include "CTransform.h"
+#include "CXCharacter.h"
 /*
 コライダクラス
 衝突判定データ
@@ -18,6 +19,7 @@ public:
 		EENEMY_ATTACK,			//敵攻撃判定
 		EPLAYER_ATTACK,		//プレイヤー攻撃用
 		ESWORD,		//剣
+		ESHIELD,	//盾
 	};
 	ETag mTag;
 	//コライダタイプ

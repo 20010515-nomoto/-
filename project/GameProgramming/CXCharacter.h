@@ -4,10 +4,18 @@
 #include "CModelX.h"
 #include "CMatrix.h"
 #include "CCharacter.h"
+class CCollider;
 
 class CXCharacter:public CCharacter
 {
 public:
+	enum ETag
+	{
+		EZERO,		//初期値
+		EPLAYER,	//プレイヤー
+		EENEMY,		//敵
+	};
+	ETag mTag;
 	CModelX *mpModel;			//モデルデータ
 	int mAnimationIndex;		//アニメーション番号
 	bool mAnimationLoopFlg;		//true:アニメーションを繰り返す
@@ -31,6 +39,9 @@ public:
 	virtual ~CXCharacter(){
 		SAFE_DELETE_ARRAY(mpCombinedMatrix);
 	}
+
+	//衝突処理
+	virtual void Collision(CCollider *m, CCollider *o) {}
 };
 
 

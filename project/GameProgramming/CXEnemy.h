@@ -15,9 +15,21 @@ public:
 	CCollider mEnemyColSphereSword1;	//剣
 	CCollider mEnemyColSphereSword2;	//剣
 
+	CCollider mColSearch;	//サーチ用コライダ
+	CCollider mColAttack_Range;	//攻撃範囲
+
 	//衝突処理
 	void Collision(CCollider *m, CCollider *o);
+	void TaskCollision();
 
+	bool mAcquisitionFlg;	//捕捉フラグ:敵がプレイヤーを捕捉しているかどうか true:している
+	bool mAttackFlg;	//攻撃フラグ:true 攻撃する
+
+	int mHp;	//ヒットポイント
+	CCharacter *mpPlayer;	//プレイヤーのポインタ
+	CVector mPoint;	//目標地点
+
+	static CXEnemy *spThis;
 };
 
 #endif
